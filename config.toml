@@ -1,0 +1,37 @@
+[database]
+[[database.default]]
+# host = "127.0.0.1"
+# port = "5432"
+# user = "sea"
+# pass = "JQlBSYD65eTBVomOpIhbML8qwtiKN321"
+# name = "sea"
+# type = "pgsql"
+# link = ""
+# debug = ""
+# prefix = ""
+# dryRun = ""
+# charset = ""
+# weight = ""
+# timezone = ""
+# maxIdle = "10"
+# maxOpen = "100"
+# maxLifetime = "30s"
+# createdAt = ""
+# updatedAt = ""
+# deletedAt = ""
+# timeMaintainDisabled = ""
+# ctxStrict = ""
+[server]
+address = ":3264"
+[gfcli]
+[[gfcli.gen.dao]]
+# link = "pgsql: user=sea password=JQlBSYD65eTBVomOpIhbML8qwtiKN321 host=127.0.0.1 port=5432 dbname=sea sslmode=disable"
+# group = "default"
+# prefix = ""
+# tables = ""
+# jsonCase = "CamelLower"
+# descriptionTag = true
+# noModelComment = true
+
+[sbcounter]
+rootDir = "/_sbcounter/"
