@@ -35,3 +35,7 @@ address = ":3264"
 
 [sbcounter]
 rootDir = "/_sbcounter/"
+[[sbcounter.user]]
+key = "sbchild"
+[[sbcounter.user]]
+key = "testuser"

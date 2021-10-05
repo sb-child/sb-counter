@@ -18,3 +18,4 @@ main
 gf-empty
 .vscode
 go.sum
+config.toml
