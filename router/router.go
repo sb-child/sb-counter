@@ -16,13 +16,14 @@ package router
 
 import (
 	"sb-counter/app/api"
+
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 )
 
 func init() {
 	s := g.Server()
-	s.Group("/", func(group *ghttp.RouterGroup) {
-		group.ALL("/hello", api.Hello)
+	s.Group(g.Config().GetString("sbcounter.rootDir"), func(group *ghttp.RouterGroup) {
+		group.GET("/:user_path/:method", api.Hello)
 	})
 }

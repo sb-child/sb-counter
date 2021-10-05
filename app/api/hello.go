@@ -15,14 +15,31 @@
 package api
 
 import (
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 )
 
 var Hello = helloApi{}
 
-type helloApi struct {}
+type helloApi struct{}
+
+type User struct {
+	Path string `json:"path"`
+	View string `json:"view"`
+	DB   string `json:"db"`
+}
 
 // Index is a demonstration route handler for output "Hello World!".
 func (*helloApi) Index(r *ghttp.Request) {
-	r.Response.Writeln("Hello World!")
+	userPath := r.Get("user_path")
+	r.Response.Writeln(r.Get("method"))
+	users := []User{}
+	g.Config().GetStructs("sbcounter.user", &users)
+	r.Response.Writeln(users)
+	for _, user := range users {
+		if user.Path == userPath{
+			r.Response.Writeln(user.DB)
+		}
+	}
+
 }
