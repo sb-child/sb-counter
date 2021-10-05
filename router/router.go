@@ -24,6 +24,6 @@ import (
 func init() {
 	s := g.Server()
 	s.Group(g.Config().GetString("sbcounter.rootDir"), func(group *ghttp.RouterGroup) {
-		group.GET("/:user_path/:method", api.Hello)
+		group.GET("/:user_path/:mode/:output", api.Counter)
 	})
 }

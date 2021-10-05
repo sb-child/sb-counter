@@ -17,6 +17,7 @@ package main
 import (
 	_ "sb-counter/boot"
 	_ "sb-counter/router"
+	_ "github.com/lib/pq"
 
 	"github.com/gogf/gf/frame/g"
 )
