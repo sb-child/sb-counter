@@ -16,6 +16,7 @@ package api
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -24,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"sb-counter/app/service"
+	"time"
 
 	"github.com/disintegration/imaging"
 	"github.com/gogf/gf/frame/g"
@@ -101,30 +103,61 @@ retry:
 		goto retry
 	}
 	bgImg = imaging.Resize(bgImg, api.ImgSize.Dx(), 0, imaging.Linear)
-	bgImg = imaging.Blur(bgImg, 2)
+	bgImg = imaging.AdjustFunc(bgImg, func(c color.NRGBA) color.NRGBA {
+		v := 400
+		m := 90
+		if (int(c.R) + int(c.G) + int(c.B)) < v {
+			c.R = uint8(int(c.R) + m)
+			c.G = uint8(int(c.G) + m)
+			c.B = uint8(int(c.B) + m)
+		}
+		return c
+	})
 	bgImg = imaging.AdjustBrightness(bgImg, 10)
+	bgImg = imaging.Blur(bgImg, 4)
 	scrollMax := bgImg.Bounds().Dy() - api.ImgSize.Dy()
 	scroll := grand.Intn(scrollMax)
 	draw.Draw(img, api.ImgSize, bgImg, image.Pt(0, scroll), draw.Src)
 	return img
 }
 
-func (api *CounterApi) drawMainCounter(src *image.RGBA) *image.RGBA {
-	size := 50.0
-	posX := 0
-	posY := 50
+func (api *CounterApi) drawText(src *image.RGBA, x, y int, size float64, text string, mono bool) *image.RGBA {
+	posX := x
+	posY := y
 	bg := image.NewUniform(color.RGBA{0, 0, 0, 0xff})
 	point := fixed.Point26_6{X: fixed.Int26_6(posX * 64), Y: fixed.Int26_6(posY * 64)}
 	drawDst := image.NewRGBA(src.Bounds())
 	draw.Draw(drawDst, drawDst.Bounds(), src, src.Bounds().Min, draw.Src)
 	mainCounterFont := &font.Drawer{
-		Dst:  drawDst,
-		Src:  bg,
-		Face: truetype.NewFace(api.FontRegular, &truetype.Options{Size: size}),
-		Dot:  point,
+		Dst: drawDst,
+		Src: bg,
+		Face: truetype.NewFace(
+			func() *truetype.Font {
+				if mono {
+					return api.FontMono
+				} else {
+					return api.FontRegular
+				}
+			}(),
+			&truetype.Options{Size: size}),
+		Dot: point,
 	}
-	mainCounterFont.DrawString("45678中文")
+	mainCounterFont.DrawString(text)
 	return drawDst
+}
+
+func (api *CounterApi) drawMainCounter(src *image.RGBA) *image.RGBA {
+	dst := api.drawText(src, 10, 43, 50, "00000000000", true)
+	return api.drawText(dst, 235, 70, 25, "总访问量", false)
+}
+
+func (api *CounterApi) drawTime(src *image.RGBA) *image.RGBA {
+	now := time.Now()
+	dst := api.drawText(src, 10, src.Rect.Dy()-10, 25,
+		fmt.Sprintf("%04d.%02d.%02d %02d:%02d:%02d",
+			now.Year(), now.Month(), now.Day(),
+			now.Hour(), now.Minute(), now.Second()), false)
+	return dst
 }
 
 func (api *CounterApi) drawCard() []byte {
@@ -132,6 +165,7 @@ func (api *CounterApi) drawCard() []byte {
 	bgImg := api.getCardBackground()
 	draw.Draw(img, api.ImgSize, bgImg, bgImg.Bounds().Min, draw.Src)
 	img = api.drawMainCounter(img)
+	img = api.drawTime(img)
 	// 使用jpg减少图片传输开销
 	buff := new(bytes.Buffer)
 	jpeg.Encode(buff, img, &jpeg.Options{Quality: 80})
