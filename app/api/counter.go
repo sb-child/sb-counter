@@ -49,11 +49,11 @@ type User struct {
 	DB   string `json:"db"`
 }
 
-type View struct {
-	Path string `json:"path"`
-	View string `json:"view"`
-	DB   string `json:"db"`
-}
+// type View struct {
+// 	Path string `json:"path"`
+// 	View string `json:"view"`
+// 	DB   string `json:"db"`
+// }
 
 type CounterApi struct {
 	ImgSize     image.Rectangle
