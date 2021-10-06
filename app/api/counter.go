@@ -17,6 +17,7 @@ package api
 import (
 	"bytes"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/jpeg"
 	_ "image/png"
@@ -30,12 +31,14 @@ import (
 	"github.com/gogf/gf/util/grand"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font"
+	"golang.org/x/image/math/fixed"
 )
 
 var Counter = CounterApi{
 	ImgSize:     image.Rect(0, 0, 350, 150),
 	FontRegular: prepareFont("OPPOSans-R.ttf"),
-	FontBold:    prepareFont("OPPOSans-B.ttf"),
+	FontMono:    prepareFont("JetBrainsMono-Regular.ttf"),
 }
 
 type User struct {
@@ -53,7 +56,7 @@ type View struct {
 type CounterApi struct {
 	ImgSize     image.Rectangle
 	FontRegular *truetype.Font
-	FontBold    *truetype.Font
+	FontMono    *truetype.Font
 }
 
 func prepareFont(path string) *truetype.Font {
@@ -106,16 +109,21 @@ retry:
 	return img
 }
 
-func (api *CounterApi) drawMainCounter(src *image.RGBA) (dst *image.RGBA) {
+func (api *CounterApi) drawMainCounter(src *image.RGBA) *image.RGBA {
+	size := 50.0
+	posX := 0
+	posY := 50
+	bg := image.NewUniform(color.RGBA{0, 0, 0, 0xff})
+	point := fixed.Point26_6{X: fixed.Int26_6(posX * 64), Y: fixed.Int26_6(posY * 64)}
 	drawDst := image.NewRGBA(src.Bounds())
-	mainCounterFont := freetype.NewContext()
-	mainCounterFont.SetFont(api.FontBold)
-	mainCounterFont.SetFontSize(20.0)
-	mainCounterFont.SetDPI(100.0)
-	mainCounterFont.SetSrc(src)
-	mainCounterFont.SetDst(drawDst)
-	pt := freetype.Pt(50, 10)
-	mainCounterFont.DrawString("45678中文", pt)
+	draw.Draw(drawDst, drawDst.Bounds(), src, src.Bounds().Min, draw.Src)
+	mainCounterFont := &font.Drawer{
+		Dst:  drawDst,
+		Src:  bg,
+		Face: truetype.NewFace(api.FontRegular, &truetype.Options{Size: size}),
+		Dot:  point,
+	}
+	mainCounterFont.DrawString("45678中文")
 	return drawDst
 }
 
