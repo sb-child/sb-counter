@@ -23,6 +23,7 @@ import (
 
 func init() {
 	s := g.Server()
+	// s.EnablePProf()
 	s.Group(g.Config().GetString("sbcounter.rootDir"), func(group *ghttp.RouterGroup) {
 		group.GET("/:user_path/:mode/:output", api.Counter)
 	})

@@ -69,19 +69,6 @@ func prepareFont(path string) *truetype.Font {
 	return tt
 }
 
-func (api *CounterApi) handleMode(mode string, r *ghttp.Request, db string) {
-	switch mode {
-	case "rw":
-		service.Counter().Add(db, r.GetClientIp())
-	case "ro":
-		// readonly
-		return
-	default:
-		// other
-		return
-	}
-}
-
 func (api *CounterApi) getCardBackground() *image.RGBA {
 retry:
 	backgroundImgDir := g.Config().GetString("sbcounter.backgroundImageDir")
@@ -96,7 +83,7 @@ retry:
 		goto retry
 	}
 	defer f.Close()
-	g.Log().Info(selectedBackgroundImg)
+	g.Log().Debug("bg", selectedBackgroundImg)
 	img := image.NewRGBA(api.ImgSize)
 	bgImg, _, err := image.Decode(f)
 	if err != nil {
@@ -146,9 +133,26 @@ func (api *CounterApi) drawText(src *image.RGBA, x, y int, size float64, text st
 	return drawDst
 }
 
-func (api *CounterApi) drawMainCounter(src *image.RGBA) *image.RGBA {
-	dst := api.drawText(src, 10, 43, 50, "00000000000", true)
+func (api *CounterApi) drawMainCounter(src *image.RGBA, v int) *image.RGBA {
+	dst := api.drawText(src, 10, 43, 50, fmt.Sprintf("%11d", v), true)
+	for i := 10; i < dst.Rect.Dx()-10; i++ {
+		for j := -1; j <= 1; j++ {
+			dst.SetRGBA(i, 80+j, color.RGBA{0, 0, 0, 0xff})
+		}
+	}
 	return api.drawText(dst, 235, 70, 25, "总访问量", false)
+}
+
+func (api *CounterApi) drawDailyCounter(src *image.RGBA, v, y int) *image.RGBA {
+	dst := src
+	var t string
+	if y <= 0 {
+		t = fmt.Sprintf("日活%d", v)
+	} else {
+		t = fmt.Sprintf("日活%d, %+d", v, v-y)
+	}
+	dst = api.drawText(dst, 10, 110, 25, t, false)
+	return dst
 }
 
 func (api *CounterApi) drawTime(src *image.RGBA) *image.RGBA {
@@ -160,11 +164,12 @@ func (api *CounterApi) drawTime(src *image.RGBA) *image.RGBA {
 	return dst
 }
 
-func (api *CounterApi) drawCard() []byte {
+func (api *CounterApi) drawCard(today, all, yesterday int) []byte {
 	img := image.NewRGBA(api.ImgSize)
 	bgImg := api.getCardBackground()
 	draw.Draw(img, api.ImgSize, bgImg, bgImg.Bounds().Min, draw.Src)
-	img = api.drawMainCounter(img)
+	img = api.drawMainCounter(img, all)
+	img = api.drawDailyCounter(img, today, yesterday)
 	img = api.drawTime(img)
 	// 使用jpg减少图片传输开销
 	buff := new(bytes.Buffer)
@@ -172,12 +177,25 @@ func (api *CounterApi) drawCard() []byte {
 	return buff.Bytes()
 }
 
-func (api *CounterApi) handleOutput(output string, r *ghttp.Request) {
+func (api *CounterApi) handleMode(mode string, r *ghttp.Request, db string) {
+	switch mode {
+	case "rw":
+		service.Counter().Add(db, r.GetClientIp())
+	case "ro":
+		// readonly
+		return
+	default:
+		// other
+		return
+	}
+}
+
+func (api *CounterApi) handleOutput(output string, r *ghttp.Request, today, all, yesterday int) {
 	r.Response.Header().Set("Cache-Control", "no-cache,max-age=0,no-store,s-maxage=0,proxy-revalidate")
 	switch output {
 	case "card":
 		r.Response.Header().Set("Content-Type", "image/jpeg")
-		r.Response.Write(api.drawCard())
+		r.Response.Write(api.drawCard(today, all, yesterday))
 	case "json":
 		r.Response.Header().Set("Content-Type", "application/json")
 	default:
@@ -202,5 +220,8 @@ func (api *CounterApi) Index(r *ghttp.Request) {
 		return
 	}
 	api.handleMode(mode, r, users[selectedUser].DB)
-	api.handleOutput(output, r)
+	all := service.Counter().GetAll(users[selectedUser].DB)
+	today := service.Counter().GetDay(users[selectedUser].DB, 1)
+	yesterday := service.Counter().GetDay(users[selectedUser].DB, 2)
+	api.handleOutput(output, r, today, all, yesterday)
 }
