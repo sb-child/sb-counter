@@ -143,15 +143,20 @@ func (api *CounterApi) drawMainCounter(src *image.RGBA, v int) *image.RGBA {
 	return api.drawText(dst, 235, 70, 25, "总访问量", false)
 }
 
-func (api *CounterApi) drawDailyCounter(src *image.RGBA, v, y int) *image.RGBA {
+func (api *CounterApi) drawDailyCounter(src *image.RGBA, v, y, b int) *image.RGBA {
 	dst := src
-	var t string
+	t := fmt.Sprintf("日活%d", v)
 	if y <= 0 {
-		t = fmt.Sprintf("日活%d", v)
+		t = fmt.Sprintf("%s/昨无", t)
 	} else {
-		t = fmt.Sprintf("日活%d, %+d", v, v-y)
+		t = fmt.Sprintf("%s/%+d", t, v-y)
 	}
-	dst = api.drawText(dst, 10, 110, 25, t, false)
+	if b <= 0 {
+		t = fmt.Sprintf("%s/前无", t)
+	} else {
+		t = fmt.Sprintf("%s/%+d", t, v-b)
+	}
+	dst = api.drawText(dst, 10, 110, 20, t, false)
 	return dst
 }
 
@@ -164,12 +169,12 @@ func (api *CounterApi) drawTime(src *image.RGBA) *image.RGBA {
 	return dst
 }
 
-func (api *CounterApi) drawCard(today, all, yesterday int) []byte {
+func (api *CounterApi) drawCard(today, all, yesterday, beforeYesterday int) []byte {
 	img := image.NewRGBA(api.ImgSize)
 	bgImg := api.getCardBackground()
 	draw.Draw(img, api.ImgSize, bgImg, bgImg.Bounds().Min, draw.Src)
 	img = api.drawMainCounter(img, all)
-	img = api.drawDailyCounter(img, today, yesterday)
+	img = api.drawDailyCounter(img, today, yesterday, beforeYesterday)
 	img = api.drawTime(img)
 	// 使用jpg减少图片传输开销
 	buff := new(bytes.Buffer)
@@ -190,12 +195,12 @@ func (api *CounterApi) handleMode(mode string, r *ghttp.Request, db string) {
 	}
 }
 
-func (api *CounterApi) handleOutput(output string, r *ghttp.Request, today, all, yesterday int) {
+func (api *CounterApi) handleOutput(output string, r *ghttp.Request, today, all, yesterday, beforeYesterday int) {
 	r.Response.Header().Set("Cache-Control", "no-cache,max-age=0,no-store,s-maxage=0,proxy-revalidate")
 	switch output {
 	case "card":
 		r.Response.Header().Set("Content-Type", "image/jpeg")
-		r.Response.Write(api.drawCard(today, all, yesterday))
+		r.Response.Write(api.drawCard(today, all, yesterday, beforeYesterday))
 	case "json":
 		r.Response.Header().Set("Content-Type", "application/json")
 	default:
@@ -223,5 +228,6 @@ func (api *CounterApi) Index(r *ghttp.Request) {
 	all := service.Counter().GetAll(users[selectedUser].DB)
 	today := service.Counter().GetDay(users[selectedUser].DB, 1)
 	yesterday := service.Counter().GetDay(users[selectedUser].DB, 2)
-	api.handleOutput(output, r, today, all, yesterday)
+	beforeYesterday := service.Counter().GetDay(users[selectedUser].DB, 3)
+	api.handleOutput(output, r, today, all, yesterday, beforeYesterday)
 }
