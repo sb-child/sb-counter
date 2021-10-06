@@ -10,6 +10,13 @@
 |:----:|
 |<img src="https://sbc-io.xyz:81/_sbcounter/test/rw/card" width="100%">|
 
+这些链接可供测试
++ https://sbc-io.xyz:81/_sbcounter/t1/rw/card
++ https://sbc-io.xyz:81/_sbcounter/t2/rw/card
++ https://sbc-io.xyz:81/_sbcounter/t3/rw/card
++ https://sbc-io.xyz:81/_sbcounter/t4/rw/card
++ https://sbc-io.xyz:81/_sbcounter/t5/rw/card
+
 ## 用途
 
 记录访问量
