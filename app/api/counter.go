@@ -154,7 +154,7 @@ func (api *CounterApi) drawDailyCounter(src *image.RGBA, v, y, b int) *image.RGB
 	if b <= 0 {
 		t = fmt.Sprintf("%s/前无", t)
 	} else {
-		t = fmt.Sprintf("%s/%+d", t, v-b)
+		t = fmt.Sprintf("%s/%+d", t, y-b)
 	}
 	dst = api.drawText(dst, 10, 110, 20, t, false)
 	return dst
