@@ -49,7 +49,7 @@ ALTER TABLE public.counter
 + 更改`sb-counter`设置
 
 3. 编译
-+ 准备好`golang`和`gocli`环境
++ 准备好`golang`和`gfcli`环境
 + `gf build main.go --pack public,template`
 
 4. 部署
