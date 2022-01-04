@@ -1,11 +1,10 @@
 package main
 
 import (
-	_ "sbcounter/internal/packed"
-
-	"sbcounter/internal/cmd"
+	_ "internal/internal/packed"
 
 	"github.com/gogf/gf/v2/os/gctx"
+	"internal/internal/cmd"
 )
 
 func main() {

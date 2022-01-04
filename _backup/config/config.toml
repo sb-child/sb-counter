@@ -1,0 +1,57 @@
+# ----------------------------------------------------------------
+# 数据库设置
+[database]
+[[database.default]]
+host = "127.0.0.1" # 数据库ip地址
+port = "5432" # 数据库端口
+user = "sbc-services" # 用户名
+pass = "9eNil7KN5iZbX0v2" # 密码
+name = "sb-counter" # 数据库名称
+type = "pgsql" # 数据库类型
+link = ""
+debug = ""
+prefix = ""
+dryRun = ""
+charset = ""
+weight = ""
+timezone = ""
+maxIdle = "10"
+maxOpen = "100"
+maxLifetime = "30s"
+createdAt = ""
+updatedAt = ""
+deletedAt = ""
+timeMaintainDisabled = ""
+ctxStrict = ""
+# ----------------------------------------------------------------
+# 服务器设置
+[server]
+address = ":3264"
+# ----------------------------------------------------------------
+# gfcli 设置, 仅供开发使用
+[gfcli]
+[[gfcli.gen.dao]]
+link = "pgsql: user=sbc-services password=9eNil7KN5iZbX0v2 host=127.0.0.1 port=5432 dbname=sb-counter sslmode=disable"
+group = "default"
+prefix = ""
+tables = ""
+jsonCase = "CamelLower"
+descriptionTag = true
+noModelComment = true
+# ----------------------------------------------------------------
+# sb-counter 设置
+[sbcounter]
+rootDir = "/_sbcounter/" # sb-counter 根目录
+backgroundImageDir = "/media/hdd/动漫(偷的)/all/" # 背景图片位置
+[[sbcounter.user]] # 用户
+path = "sbchild" # 用户的唯一名字
+view = "profile" # 用户的视图
+db = "1" # 用户的数据库id, 可以重复
+[[sbcounter.user]]
+path = "testuser"
+view = "profile"
+db = "2"
+[[sbcounter.view]] # (TODO) 视图
+name = "profile" # 视图的唯一名字
+db = ["1"] # 视图使用的数据库id列表
+displayType = "chart" # 视图展现形式: chart(图表), json
