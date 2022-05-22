@@ -10,6 +10,11 @@
 |:----:|
 |<img src="https://sbc-io.xyz:81/_sbcounter/test/rw/card" width="100%">|
 
+| 图解(硬核) |
+|:----:|
+|<img src="https://user-images.githubusercontent.com/55868015/169673597-322babec-b2fb-41ce-bf7b-c773970d7479.png" width="100%">|
+
+
 这些链接可供测试
 + https://sbc-io.xyz:81/_sbcounter/t1/rw/card
 + https://sbc-io.xyz:81/_sbcounter/t2/rw/card
