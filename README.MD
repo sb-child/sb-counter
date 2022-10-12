@@ -8,7 +8,7 @@
 ## demo
 | 数据 |
 |:----:|
-|<img src="https://sbc-io.xyz:81/_sbcounter/test/rw/card" width="100%">|
+|<img src="https://my.sbchild.top:81/_sbcounter/test/rw/card" width="100%">|
 
 | 图解(硬核) |
 |:----:|
@@ -16,11 +16,11 @@
 
 
 这些链接可供测试
-+ https://sbc-io.xyz:81/_sbcounter/t1/rw/card
-+ https://sbc-io.xyz:81/_sbcounter/t2/rw/card
-+ https://sbc-io.xyz:81/_sbcounter/t3/rw/card
-+ https://sbc-io.xyz:81/_sbcounter/t4/rw/card
-+ https://sbc-io.xyz:81/_sbcounter/t5/rw/card
++ https://my.sbchild.top:81/_sbcounter/t1/rw/card
++ https://my.sbchild.top:81/_sbcounter/t2/rw/card
++ https://my.sbchild.top:81/_sbcounter/t3/rw/card
++ https://my.sbchild.top:81/_sbcounter/t4/rw/card
++ https://my.sbchild.top:81/_sbcounter/t5/rw/card
 
 ## 用途
 
