@@ -79,6 +79,26 @@ ALTER TABLE public.counter
 + 写入模式, 每次访问都会计数: `http://127.0.0.1:端口号/根目录/用户名/rw/card`
 + 只读模式, 只能查看, 不会记录: `http://127.0.0.1:端口号/根目录/用户名/ro/card`
 
+## 配置文件是什么鬼
+
+每个合法的链接都包含一个标识名（称为`path`），访问计数器将根据这个标识名来记录访问次数。
+
+此外，每个路径都归属于一个分组，每个分组的访问记录都将存储到数据库中。
+
+如果多个路径属于同一分组，它们的访问计数将会共享。例如，如果两个路径都属于 sbchild-profile 分组，它们的访问计数将会合并计算。
+
+```yaml
+sbcounter:
+  # 省略
+  user:
+    - path: "sbchild"  # 这个是路径的名字 例子: http://127.0.0.1:3264/_sbcounter/sbchild/rw/card
+      db: "sbchild-profile"  # 如果上述链接被访问过的话, 访问记录会保存在这个分组(sbchild-profile)里
+    - path: "testuser" # 具有相同分组的链接, 看到的访问计数是一样的
+      db: "sbchild-profile"
+    - path: "aaa" # 这是另一个分组，它和上一个路径互不影响
+      db: "2"
+```
+
 ## 框架
 
 [GoFrame](https://goframe.org)
