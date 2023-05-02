@@ -1,6 +1,6 @@
 # SB-Counter 色逼数
 
-**alpha版, 谨慎部署**<sub>_~~作者都部署了, 还怕什么?~~_</sub>
+**beta版, 可以试试部署啦**<sub>_~~作者都部署了, 还怕什么?~~_</sub>
 
 好耶, 是色逼数!
 <sub>_~~你心里, 没有逼数!~~_</sub>
@@ -34,6 +34,13 @@
 1. 创建数据库, 目前只支持`postgresql`:
 
 ```sql
+CREATE USER "[用户名]" PASSWORD '[密码]';
+CREATE DATABASE [数据库名] OWNER "[用户名]";
+```
+
+进入 `[数据库名]` 数据库
+
+```sql
 DROP TABLE public.counter;
 
 CREATE TABLE IF NOT EXISTS public.counter
@@ -47,23 +54,25 @@ CREATE TABLE IF NOT EXISTS public.counter
 TABLESPACE [表空间, 默认为 pg_default];
 
 ALTER TABLE public.counter
-    OWNER to "[数据表owner]";
+    OWNER to "[用户名]";
 ```
 
 2. 在config目录下, 复制`config.example.toml`到`config.toml`, 按需编辑`config.toml`:
 
-+ 更改数据库ip, 端口号, 名称, 用户名和密码
++ 更改数据库地址, 端口号, 名称, 用户名和密码
 + 更改监听端口
 + 更改`sb-counter`设置
 
 3. 编译
 
 + 准备好`golang 1.20+`和`gfcli`环境
-+ `gf build main.go --pack public,template`
++ 拷贝`manifest/config/config.yaml`到`./config.yaml`
++ `./build.sh`
 
 4. 部署
 
-+ 运行编译好的`main`程序
++ 确保`sb-counter-bin`和`config.yaml`在同一目录下
++ 运行`sb-counter-bin`
 
 5. 使用
 

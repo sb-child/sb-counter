@@ -13,5 +13,6 @@ output/
 manifest/output/
 temp/
 manifest/config/config.yaml
+config.yaml
 internal/packed/data.go
 sb-counter-bin
