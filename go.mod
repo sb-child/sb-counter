@@ -1,6 +1,6 @@
 module sbcounter
 
-go 1.17
+go 1.20
 
 require github.com/gogf/gf/v2 v2.0.0-rc.0.20220104132444-99455e328b35
 
