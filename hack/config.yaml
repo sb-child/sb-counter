@@ -1,0 +1,11 @@
+# gfcli 设置, 仅供开发使用
+gfcli:
+  gen:
+    dao:
+      link: "pgsql: user=sb-services password=passwd host=127.0.0.1 port=5432 dbname=postgres sslmode=disable"
+      group: "default"
+      prefix: ""
+      tables: ""
+      jsonCase: "CamelLower"
+      descriptionTag: true
+      noModelComment: true
